@@ -1054,6 +1054,7 @@ void GenerationSignal::newcorrelate(vector<complex<double>>& base_signal, vector
     }
 
     GetK(K, PSg, PSh, HSopr, ModH);
+
     vector<complex<double>> Hu;
     for (int i = 0; i < analyzed_signal.size(); i++) {
         Hu.push_back(analyzed_signal[i]);
@@ -1062,13 +1063,28 @@ void GenerationSignal::newcorrelate(vector<complex<double>>& base_signal, vector
 
 
     vector<complex<double>> Peremn;
+
+
+    int size1 = Hu.size();
+    int size2 = K.size();
+
     for (int i = 0; i < Hu.size(); i++)
     {
         Peremn.push_back(K[i] * Hu[i]);
         x.push_back(i);
     }
+
+
+
     newFFT(Peremn,1);
-    correlation = Peremn;
+    vector<complex<double>> Peremn_new;
+    for(int i=0;i<Peremn.size();i++)
+    {
+        if(i<Peremn.size()/2) Peremn_new.push_back(Peremn[i+Peremn.size()/2]);
+        else Peremn_new.push_back(Peremn[i-Peremn.size()/2]);
+    }
+
+    correlation = Peremn_new;
 
 }
 
