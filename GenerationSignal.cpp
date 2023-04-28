@@ -338,6 +338,7 @@ void GenerationSignal::GetSigma(vector<double>& InputSignal1, vector<double>rx, 
     vector<vector<double>> cor;
     cor.clear();
     cor.resize(1);
+
     for (int m = 0; m < P; m++)
     {
         /*summ = 0;
@@ -498,7 +499,7 @@ void GenerationSignal::GetSigma(vector<double>& InputSignal1, vector<double>rx, 
         InvR[i].resize(param.p);
         for (int j = 0; j < param.p; j++)
         {
-            if (i == j)InvR[i][j] = Akrest[i][j]/* + DoubleRand(0.001, 0.05)*/;
+            if (i == j)InvR[i][j] = Akrest[i][j] + DoubleRand(0.01, 0.005);
             else
                 InvR[i][j] = Akrest[i][j];
         }
@@ -516,7 +517,7 @@ void GenerationSignal::GetSigma(vector<double>& InputSignal1, vector<double>rx, 
 
         int kol = 0;
         int Pi = 0;
-        for (int i = ti; i < param.p + ti; i++)
+        /*for (int i = ti; i < param.p + ti; i++)
         {
             double counter = 0;
             for (int j = 0; j < InputSignal1.size(); j++)
@@ -527,7 +528,66 @@ void GenerationSignal::GetSigma(vector<double>& InputSignal1, vector<double>rx, 
             }
             r[Pi] = counter / M;
             Pi++;
+        }*/
+
+        for (int i = ti; i < param.p + ti; i++)
+        {
+            double counter = 0;
+            for (int j = i; j < i + M; j++)
+            {
+                counter += InputSignal1[j] * InputSignal1[j - i];
+            }
+            r[Pi] = counter/M;
+            Pi++;
         }
+
+        /*for (int i = ti; i < param.p + ti; i++)
+        {
+            double counter = 0;
+            for (int j = i; j < i+M; j++)
+            {
+                if(j+i<InputSignal1.size()) counter += InputSignal1[j] * InputSignal1[j + i];
+                else
+                {
+                    counter += InputSignal1[j] * InputSignal1[(j + i) - InputSignal1.size()];
+                }
+            }
+            r[Pi] = counter / M;
+            Pi++;
+        }*/
+
+       /* for (int i = ti; i < param.p + ti; i++)
+        {
+            double counter = 0;
+            int k = 0;
+            for (int j = i; j < i + M; j++)
+            {
+                counter += InputSignal1[j] * InputSignal1[i-k];
+                k++;
+            }
+            r[Pi] = counter / M;
+            Pi++;
+        }*/
+
+        /*double r0=0;
+        for(int i=0;i<param.p;i++)
+        {
+            if(r[i]>r0) r0 = r[i];
+        }
+        for(int i=0;i<param.p;i++)
+        {
+            r[i]/=r0;
+        }*/
+
+        /*info.MassOtrisovka.push_back(r);
+        vector<double> x;
+        //sampling_period = 1. / param.fdisk;// период дискретизации
+        //t = 0;
+        for (int k = 0; k < r.size(); k++) {
+            x.push_back(k);
+        }
+        info.MassOtshetX.push_back(x);
+        listt.push_back("r");*/
 
         vector<double> exp2 = Composition_Matrix_Stroka(InvR, r, param.p, param.p);
 
@@ -591,7 +651,7 @@ QVector<QVector<double>> GenerationSignal::GenerateShortSignal(ParamSignal& para
                 else phase = 3.1415926535897;
                 //deltaF=0;
                 InputSignal[i].push_back((Ampl * sin(2 * 3.1415926535897 * freq[i] * dbl_index + phase)));
-                sign[i].push_back((Ampl * cos(2 * 3.1415926535897 * freq[i] * dbl_index)));
+                sign[i].push_back((Ampl * cos(2 * 3.1415926535897 * param.f0 * dbl_index)));
                 dbl_index += sampling_period;
                 Bit.push_back((int) bit);
                 bitPosl[i].push_back(bit);
@@ -717,14 +777,14 @@ QVector<QVector<double>> GenerationSignal::GenerateLongSignal(ParamSignal& param
 
 
     double d = Duration / 10;
-    vc.resize(KolSour);
+    vc.resize(KolSat);
     for(int i=0;i<KolSat;i++)
     {
         LongSignal[i].resize(KolSour);
 
         for(int j=0;j<KolSour;j++)
         {
-            transformSignal(InputSignal[j], sdvigTime[i + KolSat * j] * d, d, sdvigFreq[i + KolSat * j], 1, param.snr, LongSignal[i][j], param);
+            transformSignal(InputSignal[j], sdvigTime[i + KolSat * j] * d, d, /*sdvigFreq[i + KolSat * j]*/1, 1, param.snr, LongSignal[i][j], param);
             //LongSignal[i][j]=InputSignal[j];
 
             /*double time_shift = sdvigTime[i + KolSat * j] * d * param.fdisk;
@@ -739,32 +799,11 @@ QVector<QVector<double>> GenerationSignal::GenerateLongSignal(ParamSignal& param
                 }
 
             }*/
-
-            vector<double>sinus;
-            for(int k=0;k<LongSignal[i][j].size();k++)
-                sinus.push_back(sign[j][k]);
-
-            addNoise(sinus, param.snr, param);
-
-            //addNoise(LongSignal[i][j], param.snr, param);
-            //addNoise(sinus, param.snr, param);
-            GetSigma(LongSignal[i][j], sinus, vc[j], param);
-
-            info.MassOtrisovka.push_back(vc[j]);
-            vector<double> x;
-            double sampling_period = 1. / param.fdisk;// период дискретизации
-            double t = 0;
-            for (int k = 0; k < vc[j].size(); k++) {
-                x.push_back(t);
-                t += sampling_period;
-            }
-            info.MassOtshetX.push_back(x);
-            listt.push_back("Сигма");
         }
 
         if (KolSour == 1)
         {
-            SummSignal[i] = vc[0];
+            SummSignal[i] = LongSignal[i][0];
         }
         else {
             for (int j = 1; j < KolSour; j++) {
@@ -773,20 +812,51 @@ QVector<QVector<double>> GenerationSignal::GenerateLongSignal(ParamSignal& param
                     vector<vector<double>> sgs;
                     sgs.resize(2);
 
-                    sgs[0] = vc[0];
-                    sgs[1] = vc[j];
+                    sgs[0] = LongSignal[i][0];
+                    sgs[1] = LongSignal[i][j];
 
                     coherentSumm(sgs, SummSignal[i]);
                 } else {
                     vector<vector<double>> sgs;
                     sgs.resize(2);
                     sgs[0] = SummSignal[i];
-                    sgs[1] = vc[j];
+                    sgs[1] = LongSignal[i][j];
 
                     coherentSumm(sgs, SummSignal[i]);
                 }
             }
         }
+        vector<double>sinus;
+        for(int k=0;k<SummSignal[i].size();k++)
+            sinus.push_back(sign[0][k]);
+
+        addNoise(sinus, param.snr, param);
+
+        //addNoise(LongSignal[i][j], param.snr, param);
+        //addNoise(sinus, param.snr, param);
+        GetSigma(SummSignal[i], sinus, vc[i], param);
+
+        info.MassOtrisovka.push_back(vc[i]);
+        vector<double> x;
+        double sampling_period = 1. / param.fdisk;// период дискретизации
+        double t = 0;
+        for (int k = 0; k < vc[i].size(); k++) {
+            x.push_back(t);
+            t += sampling_period;
+        }
+        info.MassOtshetX.push_back(x);
+        listt.push_back("Сигма");
+
+        info.MassOtrisovka.push_back(SummSignal[i]);
+        x.clear();
+        sampling_period = 1. / param.fdisk;// период дискретизации
+        t = 0;
+        for (int k = 0; k < SummSignal[i].size(); k++) {
+            x.push_back(t);
+            t += sampling_period;
+        }
+        info.MassOtshetX.push_back(x);
+        listt.push_back("Summ");
     }
     bitPosl.clear();
 
@@ -1203,27 +1273,27 @@ InfoList GenerationSignal::Calculate(ParamSignal& param)
         double sredLongSigma1 = 0, sredLongSigma2 = 0;
         if(k+1==KolSat)
         {
-            for (int i = 0; i < SummSignal[k].size(); i++) {
-                sredLongSigma1 += SummSignal[k][i];
-                sredLongSigma2 += SummSignal[0][i];
+            for (int i = 0; i < vc[k].size(); i++) {
+                sredLongSigma1 += vc[k][i];
+                sredLongSigma2 += vc[0][i];
             }
-            sredLongSigma1 /= SummSignal[k].size();
-            sredLongSigma2 /= SummSignal[0].size();
+            sredLongSigma1 /= vc[k].size();
+            sredLongSigma2 /= vc[0].size();
 
-            Sigma = SummSignal[k];
-            LongSigma = SummSignal[0];
+            Sigma = vc[k];
+            LongSigma = vc[0];
         }
         else
         {
-            for (int i = 0; i < SummSignal[k].size(); i++) {
-                sredLongSigma1 += SummSignal[k][i];
-                sredLongSigma2 += SummSignal[k+1][i];
+            for (int i = 0; i < vc[k].size(); i++) {
+                sredLongSigma1 += vc[k][i];
+                sredLongSigma2 += vc[k+1][i];
             }
-            sredLongSigma1 /= SummSignal[k].size();
-            sredLongSigma2 /= SummSignal[k+1].size();
+            sredLongSigma1 /= vc[k].size();
+            sredLongSigma2 /= vc[k+1].size();
 
-            Sigma = SummSignal[k];
-            LongSigma = SummSignal[k+1];
+            Sigma = vc[k];
+            LongSigma = vc[k+1];
         }
 
 

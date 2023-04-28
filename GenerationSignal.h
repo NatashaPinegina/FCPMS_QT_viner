@@ -26,7 +26,7 @@ public:
     int kol_bit;
     double sizeSPM;
     int KolSat = 3;
-    int KolSour = 3;
+    int KolSour = 2;
 
 
     /**Function*/
