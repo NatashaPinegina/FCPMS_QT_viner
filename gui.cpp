@@ -15,7 +15,7 @@ namespace ui_gui {
 
     gui::gui(QWidget *parent) : QWidget(parent), ui(new Ui::gui) {
         ui->setupUi(this);
-        ui->f0->setText(QString::number(25000));
+        /*ui->f0->setText(QString::number(25000));
         ui->fdisk->setText(QString::number(215000));
         ui->SNR->setText(QString::number(20));
         ui->bitrate->setText(QString::number(4800));
@@ -23,8 +23,8 @@ namespace ui_gui {
         ui->outputT->setText(QString::number(30));
         ui->p->setText(QString::number(7));
         ui->koef_dur->setText(QString::number(0.5));
-        ui->t->setText(QString::number(0));
-        /*ui->f0->setText(QString::number(100e6));
+        ui->t->setText(QString::number(0));*/
+        ui->f0->setText(QString::number(100e6));
         ui->fdisk->setText(QString::number(300e6));
         ui->SNR->setText(QString::number(20));
         ui->bitrate->setText(QString::number(3e7));
@@ -32,7 +32,7 @@ namespace ui_gui {
         ui->outputT->setText(QString::number(40));
         ui->p->setText(QString::number(10));
         ui->koef_dur->setText(QString::number(0.5));
-        ui->t->setText(QString::number(0));*/
+        ui->t->setText(QString::number(0));
     }
 
     gui::~gui() {

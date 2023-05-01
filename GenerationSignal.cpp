@@ -535,6 +535,10 @@ void GenerationSignal::GetSigma(vector<double>& InputSignal1, vector<double>rx, 
             double counter = 0;
             for (int j = i; j < i + M; j++)
             {
+                int k =j;
+                int s =i;
+                double ss = InputSignal1[j];
+                double sss = InputSignal1[j - i];
                 counter += InputSignal1[j] * InputSignal1[j - i];
             }
             r[Pi] = counter/M;
@@ -835,6 +839,16 @@ QVector<QVector<double>> GenerationSignal::GenerateLongSignal(ParamSignal& param
         //addNoise(LongSignal[i][j], param.snr, param);
         //addNoise(sinus, param.snr, param);
         GetSigma(SummSignal[i], sinus, vc[i], param);
+
+        double maxVC=0;
+        for(int s=0;s<vc[i].size();s++)
+        {
+            if(vc[i][s]>maxVC) maxVC=vc[i][s];
+        }
+        for(int s=0;s<vc[i].size();s++)
+        {
+            vc[i][s]/=maxVC;
+        }
 
         info.MassOtrisovka.push_back(vc[i]);
         vector<double> x;
