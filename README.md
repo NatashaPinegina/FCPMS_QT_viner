@@ -4,7 +4,7 @@
 
 ### Сборка
 ```
-git clone 
+git clone https://github.com/NatashaPinegina/FCPMS_QT_viner.git
 cd FCPMS_QT_viner
 mkdir build
 cd build
