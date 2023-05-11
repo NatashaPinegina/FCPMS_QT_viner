@@ -28,9 +28,9 @@ namespace ui_gui {
         ui->fdisk->setText(QString::number(300e6));
         ui->SNR->setText(QString::number(20));
         ui->bitrate->setText(QString::number(3e7));
-        ui->duration->setText(QString::number(0.04));
-        ui->outputT->setText(QString::number(40));
-        ui->p->setText(QString::number(10));
+        ui->duration->setText(QString::number(0.01));
+        ui->outputT->setText(QString::number(30));
+        ui->p->setText(QString::number(7));
         ui->koef_dur->setText(QString::number(0.5));
         ui->t->setText(QString::number(0));
     }
