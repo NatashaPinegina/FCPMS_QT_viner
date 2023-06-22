@@ -24,11 +24,11 @@ namespace ui_gui {
         ui->p->setText(QString::number(7));
         ui->koef_dur->setText(QString::number(0.5));
         ui->t->setText(QString::number(0));*/
-        ui->f0->setText(QString::number(100e6));
-        ui->fdisk->setText(QString::number(300e6));
+        ui->f0->setText(QString::number(3e+08));
+        ui->fdisk->setText(QString::number(9e+08));
         ui->SNR->setText(QString::number(20));
         ui->bitrate->setText(QString::number(3e7));
-        ui->duration->setText(QString::number(0.01));
+        ui->duration->setText(QString::number(0.00001));
         ui->outputT->setText(QString::number(30));
         ui->p->setText(QString::number(7));
         ui->koef_dur->setText(QString::number(0.5));
